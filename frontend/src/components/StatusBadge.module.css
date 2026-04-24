@@ -1,0 +1,16 @@
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.approved   { background: rgba(74,200,100,0.12); color: var(--green); border: 1px solid rgba(74,200,100,0.3); }
+.normal     { background: rgba(74,200,100,0.12); color: var(--green); border: 1px solid rgba(74,200,100,0.3); }
+.rejected   { background: var(--red-dim);  color: var(--red);   border: 1px solid rgba(224,82,82,0.3); }
+.suspicious { background: var(--red-dim);  color: var(--red);   border: 1px solid rgba(224,82,82,0.3); }
+.flagged    { background: var(--amber-dim);color: var(--amber); border: 1px solid rgba(240,165,0,0.3); }
+.default    { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }

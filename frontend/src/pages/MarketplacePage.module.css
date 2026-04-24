@@ -1,0 +1,226 @@
+.page { display: flex; flex-direction: column; gap: 24px; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.title { font-size: 2rem; margin-bottom: 4px; }
+.sub   { color: var(--text2); font-size: 0.9rem; }
+
+.conceptBadge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--amber-dim);
+  color: var(--amber);
+  border: 1px solid rgba(240,165,0,0.3);
+  border-radius: 20px;
+  padding: 4px 12px;
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+/* Market stats */
+.marketStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.mStat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 16px 20px;
+}
+.mLabel { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+.mValue { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; color: var(--green); }
+.mUnit  { font-size: 0.75rem; font-weight: 400; color: var(--text3); font-family: var(--font-body); }
+
+/* Body layout */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: start;
+}
+
+.sectionTitle {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  margin-bottom: 14px;
+}
+
+/* Listings grid */
+.listGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.listCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.listCard:hover { border-color: var(--border2); background: var(--surface2); }
+.selectedCard { border-color: var(--green) !important; background: var(--green-glow) !important; }
+.sold { opacity: 0.45; cursor: default; }
+
+.listTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
+.listSeller { font-size: 0.83rem; font-weight: 500; color: var(--text); line-height: 1.3; }
+
+.liveBadge, .soldBadge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.liveBadge { background: var(--green-glow); color: var(--green); border: 1px solid var(--border2); }
+.soldBadge { background: var(--surface2);   color: var(--text3); border: 1px solid var(--border); }
+
+.listMat   { font-family: var(--font-mono); font-size: 0.72rem; text-transform: capitalize; }
+.listCredits { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1; }
+.listUnit  { font-size: 0.75rem; font-weight: 400; color: var(--text3); }
+.listPrice { font-family: var(--font-mono); font-size: 0.85rem; color: var(--green); }
+.listTotal { font-size: 0.75rem; color: var(--text3); font-family: var(--font-mono); }
+
+.buyBtn {
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  padding: 8px 14px;
+  border-radius: var(--r);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-head);
+  cursor: pointer;
+  margin-top: 6px;
+  transition: opacity 0.15s;
+}
+.buyBtn:hover { opacity: 0.85; }
+
+/* Right panel */
+.right { display: flex; flex-direction: column; gap: 16px; }
+
+.chartCard, .howCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  padding: 20px;
+}
+
+.chartWrap { display: flex; flex-direction: column; gap: 8px; }
+.chartLabels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text3);
+}
+
+/* How steps */
+.howSteps { display: flex; flex-direction: column; gap: 14px; }
+.howStep  { display: flex; align-items: flex-start; gap: 12px; }
+.howNum {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--green-glow);
+  border: 1px solid var(--border2);
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.howTitle { font-size: 0.83rem; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.howSub   { font-size: 0.76rem; color: var(--text2); line-height: 1.4; }
+
+/* Modal */
+.modalBack {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r3);
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: fadeUp 0.2s ease;
+}
+.modalTitle  { font-family: var(--font-head); font-size: 1.2rem; font-weight: 700; }
+.modalSeller { font-size: 0.85rem; color: var(--text2); }
+.modalInfo   { display: flex; flex-direction: column; gap: 6px; }
+.mRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text2);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.modalNote {
+  font-size: 0.78rem;
+  color: var(--text3);
+  background: var(--bg2);
+  border-radius: var(--r);
+  padding: 10px 12px;
+  line-height: 1.5;
+  font-family: var(--font-mono);
+}
+.modalActions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+.cancelBtn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 9px 18px;
+  border-radius: var(--r2);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: border-color 0.15s;
+}
+.cancelBtn:hover { border-color: var(--text2); }
+.confirmBtn {
+  background: var(--green);
+  border: none;
+  color: var(--bg);
+  padding: 9px 18px;
+  border-radius: var(--r2);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-head);
+  transition: opacity 0.15s;
+}
+.confirmBtn:hover { opacity: 0.85; }

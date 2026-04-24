@@ -1,0 +1,160 @@
+.page { display: flex; flex-direction: column; gap: 22px; }
+
+.state    { color: var(--text2); font-family: var(--font-mono); font-size: 0.9rem; padding: 60px; text-align: center; }
+.stateErr { color: var(--red);   font-family: var(--font-mono); font-size: 0.9rem; padding: 60px; text-align: center; }
+
+.back {
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-size: 0.84rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  padding: 0;
+  transition: color 0.15s;
+  align-self: flex-start;
+}
+.back:hover { color: var(--green); }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.company { font-size: 1.8rem; margin-bottom: 6px; }
+.meta { display: flex; align-items: center; gap: 6px; font-size: 0.84rem; color: var(--text2); flex-wrap: wrap; }
+.sep { color: var(--text3); }
+
+/* Step cards */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cardApproved { border-color: rgba(74,200,100,0.3); background: var(--green-glow); }
+.cardRejected { border-color: rgba(224,82,82,0.25); background: var(--red-dim); }
+
+.step {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+}
+.cardTitle {
+  font-family: var(--font-head);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: -6px;
+}
+
+.rows { display: flex; flex-direction: column; gap: 0; }
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.row:last-child { border-bottom: none; }
+
+.rowLabel {
+  font-size: 0.78rem;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+.rowVal {
+  font-size: 0.85rem;
+  color: var(--text2);
+  text-align: right;
+}
+.highlight { color: var(--green) !important; font-weight: 500; }
+.small { font-size: 0.74rem !important; color: var(--text3) !important; }
+
+.mat {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--text2);
+}
+
+.reason {
+  font-size: 0.8rem;
+  color: var(--text2);
+  font-family: var(--font-mono);
+  line-height: 1.5;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+/* Blockchain card */
+.blockchainCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  padding: 24px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.blockchainLeft { display: flex; flex-direction: column; gap: 8px; }
+.bTitle { font-family: var(--font-head); font-size: 1rem; font-weight: 600; }
+.bSub   { font-size: 0.84rem; color: var(--text2); max-width: 480px; }
+.bId    { display: flex; align-items: center; gap: 10px; }
+.bLabel {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.bId .mono { font-size: 0.78rem; color: var(--text2); word-break: break-all; }
+
+.blockchainStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 24px;
+  border-radius: var(--r2);
+  border: 1px solid;
+  min-width: 110px;
+}
+.bApproved { background: var(--green-glow); border-color: var(--border2); }
+.bRejected { background: var(--red-dim);   border-color: rgba(224,82,82,0.3); }
+
+.bStatusIcon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.bApproved .bStatusIcon { color: var(--green); }
+.bRejected .bStatusIcon { color: var(--red); }
+
+.bStatusText {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.bApproved .bStatusText { color: var(--green); }
+.bRejected .bStatusText { color: var(--red); }

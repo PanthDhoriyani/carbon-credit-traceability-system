@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  /* Palette */
+  --bg:        #0a0e0b;
+  --bg2:       #0f1510;
+  --bg3:       #141c15;
+  --surface:   #1a2318;
+  --surface2:  #1f2b1e;
+  --border:    rgba(74,200,100,0.12);
+  --border2:   rgba(74,200,100,0.22);
+
+  --green:     #4ac864;
+  --green-dim: #2e7a3e;
+  --green-glow:rgba(74,200,100,0.15);
+  --amber:     #f0a500;
+  --amber-dim: rgba(240,165,0,0.15);
+  --red:       #e05252;
+  --red-dim:   rgba(224,82,82,0.12);
+  --blue:      #4a9fd4;
+  --blue-dim:  rgba(74,159,212,0.12);
+
+  --text:      #e8f0e9;
+  --text2:     #8fa892;
+  --text3:     #5a6e5c;
+
+  /* Typography */
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  /* Spacing */
+  --r:  6px;
+  --r2: 12px;
+  --r3: 18px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+h1,h2,h3,h4,h5 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+a { color: var(--green); text-decoration: none; }
+
+input, select, textarea {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+button {
+  font-family: var(--font-head);
+  cursor: pointer;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+/* Utility classes */
+.mono { font-family: var(--font-mono); }
+.text2 { color: var(--text2); }
+.text3 { color: var(--text3); }
+.green { color: var(--green); }
+.amber { color: var(--amber); }
+.red   { color: var(--red); }
+
+/* Fade-in animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.4s ease forwards; }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
