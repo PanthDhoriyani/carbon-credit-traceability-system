@@ -46,16 +46,33 @@ async def _send_otp_bg(email: str, company_name: str, otp: str):
 async def register(body: CompanyRegister):
     """Register a new company account. Sends OTP to email for verification.
     Returns dev_otp in the response when email is not configured (dev mode).
+    If the email exists but is unverified (e.g. wrong email entered before),
+    the old record is replaced so the user can retry with any email.
     """
     db = get_db()
     if db is None:
         raise HTTPException(status_code=503, detail="Database unavailable")
 
-    # Check duplicates
-    if await db.companies.find_one({"email": body.email}):
-        raise HTTPException(status_code=409, detail="Email already registered")
-    if await db.companies.find_one({"company_id": body.company_id.upper()}):
-        raise HTTPException(status_code=409, detail="Company ID already taken")
+    # Check if email already exists
+    existing_email = await db.companies.find_one({"email": body.email})
+    if existing_email:
+        if existing_email.get("is_verified"):
+            # Already a real verified account → hard block
+            raise HTTPException(status_code=409, detail="Email already registered")
+        else:
+            # Unverified account (e.g. user entered wrong email before)
+            # → delete the stale record and allow fresh registration
+            await db.companies.delete_one({"email": body.email})
+            await db.otp_store.delete_many({"email": body.email})
+
+    # Check company_id collision — only block if the OTHER account is verified
+    existing_cid = await db.companies.find_one({"company_id": body.company_id.upper()})
+    if existing_cid and existing_cid.get("email") != body.email:
+        if existing_cid.get("is_verified"):
+            raise HTTPException(status_code=409, detail="Company ID already taken")
+        else:
+            # Stale unverified record with same company_id → clean it up
+            await db.companies.delete_one({"company_id": body.company_id.upper()})
 
     user_id = str(uuid.uuid4())
     otp = generate_otp()
@@ -75,7 +92,7 @@ async def register(body: CompanyRegister):
     await db.companies.insert_one(company_doc)
     await store_otp(body.email, otp)
 
-    # Try to send email synchronously so we can return dev_otp if it fails
+    # Try to send email; return dev_otp in response if sending fails
     email_sent = True
     try:
         await send_otp_email(body.email, body.company_name, otp)
