@@ -30,12 +30,19 @@ api.interceptors.response.use(
   (err) => {
     const url = err.config?.url || ''
     const isAuthEndpoint = AUTH_ENDPOINTS.some(ep => url.includes(ep))
+    const status = err.response?.status
 
-    if (err.response?.status === 401 && !isAuthEndpoint) {
-      // Expired/invalid token on a protected route → force logout
+    // Only force-logout on 401 from protected (non-auth) endpoints
+    if (status === 401 && !isAuthEndpoint) {
       logout()
       return Promise.reject(new Error('Session expired. Please login again.'))
     }
+
+    // 503 = backend cold start on Render free tier
+    if (status === 503 || !err.response) {
+      return Promise.reject(new Error('Server is waking up, please wait a moment and try again.'))
+    }
+
     const msg = err.response?.data?.detail || err.message || 'Request failed'
     return Promise.reject(new Error(typeof msg === 'string' ? msg : JSON.stringify(msg)))
   }
