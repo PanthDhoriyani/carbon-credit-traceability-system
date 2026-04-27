@@ -20,59 +20,10 @@ logging.basicConfig(
 ml_service = MLService()  # loads from pkl if exists, trains only if not
 
 
-async def _auto_seed_admin():
-    """
-    If ADMIN_EMAIL + ADMIN_PASSWORD env vars are set, automatically create
-    the admin account on startup (idempotent — skips if already exists).
-    This enables admin creation without shell access (e.g. Render free tier).
-    """
-    admin_email    = os.getenv("ADMIN_EMAIL", "").strip()
-    admin_password = os.getenv("ADMIN_PASSWORD", "").strip()
-
-    if not admin_email or not admin_password:
-        return  # env vars not set — skip
-
-    from app.utils.database import get_db
-    from app.utils.auth import hash_password
-    import uuid
-    from datetime import datetime, timezone
-
-    db = get_db()
-    if db is None:
-        logging.warning("Auto-seed: DB not available, skipping admin creation.")
-        return
-
-    existing = await db.companies.find_one({"email": admin_email})
-    if existing:
-        if existing.get("role") == "admin":
-            logging.info(f"Auto-seed: Admin '{admin_email}' already exists — skipping.")
-        else:
-            await db.companies.update_one(
-                {"email": admin_email},
-                {"$set": {"role": "admin", "is_verified": True}}
-            )
-            logging.info(f"Auto-seed: Promoted '{admin_email}' to admin.")
-        return
-
-    await db.companies.insert_one({
-        "user_id":        str(uuid.uuid4()),
-        "email":          admin_email,
-        "password_hash":  hash_password(admin_password),
-        "company_name":   "CCT Admin",
-        "company_id":     "ADMIN-001",
-        "industry":       "Administration",
-        "contact_phone":  None,
-        "role":           "admin",
-        "is_verified":    True,
-        "created_at":     datetime.now(timezone.utc),
-    })
-    logging.info(f"Auto-seed: Admin account created for '{admin_email}'.")
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_db()
-    await _auto_seed_admin()          # <-- create admin if env vars set
+    # ML already loaded/trained in MLService.__init__ via _load_or_train()
     app.state.ml_service = ml_service
     yield
     await close_db()

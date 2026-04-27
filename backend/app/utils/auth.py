@@ -7,10 +7,10 @@ import string
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-import bcrypt as _bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+import bcrypt as _bcrypt
 
 from app.utils.database import get_db
 
@@ -20,17 +20,17 @@ ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 1440))
 OTP_EXPIRE_MINUTES = 10
 
-# ─── Password hashing (direct bcrypt — avoids passlib 1.7.4 + bcrypt 4.x bug)
+# ─── Password hashing (direct bcrypt — avoids passlib version issues) ────────
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
 def hash_password(plain: str) -> str:
-    return _bcrypt.hashpw(plain.encode("utf-8"), _bcrypt.gensalt()).decode("utf-8")
+    return _bcrypt.hashpw(plain.encode(), _bcrypt.gensalt()).decode()
 
 
 def verify_password(plain: str, hashed: str) -> bool:
     try:
-        return _bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+        return _bcrypt.checkpw(plain.encode(), hashed.encode())
     except Exception:
         return False
 
