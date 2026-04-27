@@ -104,7 +104,12 @@ async def verify_otp(email: str, otp: str) -> bool:
     record = await db.otp_store.find_one({"email": email, "otp": otp})
     if not record:
         return False
-    if datetime.now(timezone.utc) > record["expires_at"].replace(tzinfo=timezone.utc):
+    # Motor returns datetime objects that may be naive (UTC) or aware depending on driver.
+    # Normalise both sides to offset-aware UTC for a safe comparison.
+    expires_at = record["expires_at"]
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if datetime.now(timezone.utc) > expires_at:
         await db.otp_store.delete_one({"_id": record["_id"]})
         return False
     await db.otp_store.delete_one({"_id": record["_id"]})

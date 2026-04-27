@@ -1,5 +1,6 @@
 """
 Email sending utilities using Gmail SMTP via fastapi-mail.
+Config is built lazily so .env values are guaranteed to be loaded first.
 """
 import os
 import logging
@@ -7,34 +8,45 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 
 logger = logging.getLogger("cct.email")
 
-conf = ConnectionConfig(
-    MAIL_USERNAME=os.getenv("MAIL_USERNAME", ""),
-    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", ""),
-    MAIL_FROM=os.getenv("MAIL_FROM", "noreply@cct.com"),
-    MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME", "Carbon Credit Tracer"),
-    MAIL_PORT=int(os.getenv("MAIL_PORT", 587)),
-    MAIL_SERVER=os.getenv("MAIL_SERVER", "smtp.gmail.com"),
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
-    USE_CREDENTIALS=True,
-    VALIDATE_CERTS=False,   # Disable SSL cert check (fixes Windows cert chain error)
-)
 
-fm = FastMail(conf)
+def _get_mail_config() -> ConnectionConfig:
+    """Build ConnectionConfig at call-time so .env is always loaded first."""
+    return ConnectionConfig(
+        MAIL_USERNAME=os.getenv("MAIL_USERNAME", ""),
+        MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", ""),
+        MAIL_FROM=os.getenv("MAIL_FROM", "noreply@cct.com"),
+        MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME", "Carbon Credit Tracer"),
+        MAIL_PORT=int(os.getenv("MAIL_PORT", 587)),
+        MAIL_SERVER=os.getenv("MAIL_SERVER", "smtp.gmail.com"),
+        MAIL_STARTTLS=True,
+        MAIL_SSL_TLS=False,
+        USE_CREDENTIALS=True,
+        VALIDATE_CERTS=False,   # Fixes Windows SSL cert-chain issues
+    )
+
+
+def _is_email_configured() -> bool:
+    """Return True only when real SMTP credentials are present."""
+    username = os.getenv("MAIL_USERNAME", "").strip()
+    password = os.getenv("MAIL_PASSWORD", "").strip()
+    return bool(
+        username
+        and username != "your_gmail@gmail.com"
+        and password
+    )
 
 
 async def send_otp_email(email: str, company_name: str, otp: str):
     """Send OTP verification email to newly registered company."""
-    # Always log OTP to console — useful when email is not configured
+    # Always log OTP to console – useful when email is not configured
     logger.info(f"[OTP] {email} => {otp}  (use this if email is not configured)")
     print(f"\n{'='*50}")
     print(f"[DEV OTP] Email: {email} | OTP: {otp}")
     print(f"{'='*50}\n")
 
-    # Skip sending if credentials not configured
-    if not os.getenv("MAIL_USERNAME") or os.getenv("MAIL_USERNAME") == "your_gmail@gmail.com":
+    if not _is_email_configured():
         logger.warning("Email not configured — OTP printed to console above only")
-        return
+        raise Exception("Email not configured")  # caller catches and returns dev_otp
 
     body = f"""
     <html>
@@ -62,6 +74,7 @@ async def send_otp_email(email: str, company_name: str, otp: str):
         subtype=MessageType.html,
     )
     try:
+        fm = FastMail(_get_mail_config())
         await fm.send_message(message)
         logger.info(f"OTP email sent to {email}")
     except Exception as e:
@@ -80,7 +93,7 @@ async def send_correction_email(
     custom_message: str = "",
 ):
     """Admin sends a correction suggestion to a company whose report was rejected."""
-    if not os.getenv("MAIL_USERNAME") or os.getenv("MAIL_USERNAME") == "your_gmail@gmail.com":
+    if not _is_email_configured():
         raise Exception("Email service not configured. Add MAIL_USERNAME and MAIL_PASSWORD to backend/.env")
 
     ratio = round(reported_co2 / baseline_co2 * 100, 1) if baseline_co2 > 0 else 0
@@ -123,6 +136,7 @@ async def send_correction_email(
         subtype=MessageType.html,
     )
     try:
+        fm = FastMail(_get_mail_config())
         await fm.send_message(message)
     except Exception as e:
         logger.error(f"Correction email failed: {e}")

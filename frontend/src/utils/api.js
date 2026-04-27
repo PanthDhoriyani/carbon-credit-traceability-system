@@ -1,9 +1,15 @@
 import axios from 'axios'
 import { getToken, logout } from './auth'
 
+// In dev: Vite proxy forwards /api → localhost:8000 (no env var needed)
+// In production (Render/Vercel): set VITE_API_URL=https://your-api.onrender.com
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
+
 const api = axios.create({
-  baseURL: '/api',
-  timeout: 15000,
+  baseURL: API_BASE,
+  timeout: 30000,  // 30s — Render free tier cold starts can be slow
   headers: { 'Content-Type': 'application/json' },
 })
 

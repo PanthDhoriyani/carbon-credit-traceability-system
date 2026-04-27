@@ -6,8 +6,8 @@ import re
 
 
 class SubmissionRequest(BaseModel):
-    company_name: str = Field(..., min_length=2, max_length=100)
-    company_id: str = Field(..., min_length=2, max_length=50)
+    company_name: Optional[str] = None   # read from JWT token on backend
+    company_id: Optional[str] = None     # read from JWT token on backend
     material: str = Field(..., description=f"One of: {SUPPORTED_MATERIALS}")
     quantity_tonnes: float = Field(..., gt=0, description="Quantity of material produced in tonnes")
     reported_co2_tonnes: float = Field(..., gt=0, description="Self-reported CO2 emissions in tonnes")

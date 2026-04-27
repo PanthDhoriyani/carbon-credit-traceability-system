@@ -59,7 +59,6 @@ class TokenResponse(BaseModel):
 
 
 class AdminEmailRequest(BaseModel):
-    submission_id: str
     custom_message: Optional[str] = ""
 
 
