@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Literal
 from datetime import datetime
 from app.utils.baseline import SUPPORTED_MATERIALS
+import re
 
 
 class SubmissionRequest(BaseModel):
@@ -19,6 +20,13 @@ class SubmissionRequest(BaseModel):
         if v not in SUPPORTED_MATERIALS:
             raise ValueError(f"Material must be one of: {SUPPORTED_MATERIALS}")
         return v
+
+    @field_validator("period")
+    @classmethod
+    def validate_period(cls, v):
+        if not re.match(r"^\d{4}-Q[1-4]$", v.strip()):
+            raise ValueError("Period must be in format YYYY-Q[1-4], e.g. '2024-Q2'")
+        return v.strip()
 
 
 class BaselineResult(BaseModel):
@@ -47,6 +55,7 @@ class SubmissionResponse(BaseModel):
     submission_id: str
     company_name: str
     company_id: str
+    user_id: Optional[str] = None
     material: str
     quantity_tonnes: float
     reported_co2_tonnes: float
@@ -62,12 +71,15 @@ class SubmissionResponse(BaseModel):
 class SubmissionListItem(BaseModel):
     submission_id: str
     company_name: str
+    company_id: str
     material: str
     quantity_tonnes: float
     reported_co2_tonnes: float
     baseline_co2_tonnes: float
     credits_earned: float
+    ai_verdict: str          # fix B1 — was missing
     final_status: str
+    period: Optional[str] = None
     created_at: datetime
 
 
