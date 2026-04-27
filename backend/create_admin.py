@@ -19,9 +19,7 @@ load_dotenv()
 sys.path.insert(0, os.path.dirname(__file__))
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+import bcrypt as _bcrypt
 
 
 async def seed_admin():
@@ -58,7 +56,7 @@ async def seed_admin():
     admin_doc = {
         "user_id":      str(uuid.uuid4()),
         "email":        email,
-        "password_hash": pwd_context.hash(password),
+        "password_hash": _bcrypt.hashpw(password.encode("utf-8"), _bcrypt.gensalt()).decode("utf-8"),
         "company_name": "CCT Admin",
         "company_id":   "ADMIN-001",
         "industry":     "Administration",
