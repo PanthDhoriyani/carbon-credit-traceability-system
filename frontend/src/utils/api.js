@@ -21,10 +21,18 @@ api.interceptors.request.use((config) => {
 })
 
 // ── Response interceptor: unwrap data, handle 401 ─────────────────────────
+// Auth endpoints (login/register) legitimately return 401/403 on bad creds —
+// don't auto-logout for those, just pass the real error to the caller.
+const AUTH_ENDPOINTS = ['/auth/login', '/auth/register', '/auth/verify-otp', '/auth/google', '/auth/resend-otp']
+
 api.interceptors.response.use(
   (r) => r.data,
   (err) => {
-    if (err.response?.status === 401) {
+    const url = err.config?.url || ''
+    const isAuthEndpoint = AUTH_ENDPOINTS.some(ep => url.includes(ep))
+
+    if (err.response?.status === 401 && !isAuthEndpoint) {
+      // Expired/invalid token on a protected route → force logout
       logout()
       return Promise.reject(new Error('Session expired. Please login again.'))
     }
