@@ -9,7 +9,7 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 const api = axios.create({
   baseURL: API_BASE,
-  timeout: 30000,  // 30s — Render free tier cold starts can be slow
+  timeout: 60000,  // 60s — email/SMTP calls on Render free tier can be slow on cold start
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -38,9 +38,9 @@ api.interceptors.response.use(
       return Promise.reject(new Error('Session expired. Please login again.'))
     }
 
-    // 503 = backend cold start on Render free tier
+    // 503 or no response = backend cold start on Render free tier
     if (status === 503 || !err.response) {
-      return Promise.reject(new Error('Server is waking up, please wait a moment and try again.'))
+      return Promise.reject(new Error('Server is starting up (this can take ~30 seconds on first use). Please wait a moment and try again.'))
     }
 
     const msg = err.response?.data?.detail || err.message || 'Request failed'
